@@ -33,28 +33,41 @@ function App() {
 	return (
 		<div className="App">
 			<header className="App-header">
-				<div className="chatForm">
-					<div className="chat">
-						{messages.map((message) => (
-							<div>
-								<p className="userId">{message.user}:</p>
-								<p className="message">{message.message}</p>
+				<div className="application">
+					<div className="appLayout">
+						<div className="sideBar">
+							<p>ROOMS:</p>
+						</div>
+						<div className="chatLayout">
+							<div className="chat">
+								{messages.map((message) => (
+									<div>
+										<p className="userId">
+											{message.user}:
+										</p>
+										<p className="message">
+											{message.message}
+										</p>
+									</div>
+								))}
 							</div>
-						))}
+							<div className="inputLayout">
+								<input
+									onChange={(e) => setMessage(e.target.value)}
+									className="chatInput"
+									type="text"
+									placeholder="Message"
+								></input>
+								<button
+									onClick={() => handleMessage(message)}
+									className="inputButton"
+								>
+									Send
+								</button>
+							</div>
+						</div>
 					</div>
-					<input
-						onChange={(e) => setMessage(e.target.value)}
-						className="chatInput"
-						type="text"
-						placeholder="Message"
-					></input>
 				</div>
-				<button
-					onClick={() => handleMessage(message)}
-					className="inputButton"
-				>
-					Send
-				</button>
 			</header>
 		</div>
 	);
