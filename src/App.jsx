@@ -3,7 +3,7 @@ import { io } from "socket.io-client";
 import { useEffect } from "react";
 import { useState } from "react";
 
-let socket;
+const socket = io("http://localhost:4001/");
 
 function App() {
 	const [message, setMessage] = useState("");
@@ -11,7 +11,6 @@ function App() {
 	const [user, setUser] = useState("");
 
 	useEffect(() => {
-		socket = io("http://localhost:4001/");
 		socket.on("connection", () => {
 			// console.log("works?!!=!");
 		});
