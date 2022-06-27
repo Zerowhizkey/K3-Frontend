@@ -9,15 +9,24 @@ function App() {
 	const [message, setMessage] = useState("");
 	const [messages, setMessages] = useState([]);
 	const [user, setUser] = useState("");
-	const [username, setUsername] = useState("");
+	// const [username, setUsername] = useState("");
+	const [rooms, setRooms] = useState([]);
 	const [room, setRoom] = useState("");
 	const [showChat, setShowChat] = useState(false);
 	// && room !== ""
+	console.log(user);
+	console.log(room, "detta är ett rum");
 	const chooseUsername = () => {
-		if (username !== "") {
-			socket.emit("choose_username", username);
-			socket.emit("join_room", room);
+		if (user !== "") {
+			socket.emit("choose_username", user);
+			// socket.emit("join_room", room);
 			setShowChat(true);
+		}
+	};
+
+	const chooseRoomname = () => {
+		if (room !== "") {
+			socket.emit("join_room", room);
 		}
 	};
 
@@ -36,14 +45,27 @@ function App() {
 				return [...prevMessage, { message, user, id }];
 			});
 		});
-		socket.on("user", (data) => {
-			setUser(data);
-		});
+		// socket.on("user", (data) => {
+		// 	setUser(data);
+		// });
 		return () => socket.off();
 	}, []);
 
 	function handleMessage(message) {
 		socket.emit("messages", message);
+	}
+
+	function handleUser(event) {
+		const userName = event.target.value;
+		socket.emit("user", () => {
+			setUser(userName);
+		});
+	}
+
+	function getRooms() {
+		socket.emit("existingRoom", () => {
+			setRooms();
+		});
 	}
 
 	return (
@@ -55,16 +77,9 @@ function App() {
 						type="text"
 						placeholder="John..."
 						onChange={(event) => {
-							setUsername(event.target.value);
+							setUser(event.target.value);
 						}}
 					/>
-					{/* <input
-						type="text"
-						placeholder="Room ID..."
-						onChange={(event) => {
-							setRoom(event.target.value);
-						}}
-					/> */}
 					<button onClick={chooseUsername}>Accept</button>
 				</div>
 			) : (
@@ -73,6 +88,18 @@ function App() {
 						<div className="appLayout">
 							<div className="sideBar">
 								<p>ROOMS:</p>
+								<input
+									type="text"
+									placeholder="Room ID..."
+									onChange={(event) => {
+										setRoom(event.target.value);
+									}}
+								/>
+								<button onClick={chooseRoomname}>Create</button>
+
+								<div>
+									<p className="userId">{room}:</p>
+								</div>
 							</div>
 							<div className="chatLayout">
 								<div className="chat">
@@ -80,7 +107,7 @@ function App() {
 										<div key={message.id}>
 											{/* {message.user}: */}
 											<p className="userId">
-												{message.user.username}:
+												{message.user.name}:
 											</p>
 											<p className="message">
 												{message.message}
