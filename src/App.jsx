@@ -41,24 +41,19 @@ function App() {
 		});
 		socket.on("deleted_room", (data) => {
 			setRooms(data);
+			setRoom("");
 			setMessages([]);
 		});
 
-		// socket.on("rooms", (data) => {});
 		socket.on("sent_message", (data) => {
 			setMessages(data);
 		});
-		socket.on("sent_message", (messages) => {
-			console.log(messages);
-			// console.log(id);
+		socket.on("sent_message", () => {
 			setMessages((prevMessage) => {
 				return [...prevMessage];
 			});
-			// console.log(data);
 		});
-		// socket.on("user", (data) => {
-		// 	setUser(data);
-		// });
+
 		return () => socket.off();
 	}, []);
 
@@ -70,22 +65,9 @@ function App() {
 		});
 	}
 
-	function handleUser(event) {
-		const userName = event.target.value;
-		socket.emit("user", () => {
-			setUser(userName);
-		});
-	}
-
 	const handleDelete = (roomName) => {
 		socket.emit("delete_room", roomName);
 	};
-
-	// function getAllRooms() {
-	// 	socket.emit("existingsRoom", () => {
-	// 		setRooms();
-	// 	});
-	// }
 
 	return (
 		<div className="App">
@@ -121,7 +103,7 @@ function App() {
 								<div>
 									{rooms.map((room) => (
 										<div key={room.id}>
-											<p
+											<button
 												className="userId"
 												onClick={() => {
 													setRoom(room.name);
@@ -129,7 +111,7 @@ function App() {
 												}}
 											>
 												{room.name}
-											</p>
+											</button>
 											<button
 												onClick={() =>
 													handleDelete(room.name)
