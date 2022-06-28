@@ -2,7 +2,7 @@ import "./App.css";
 import { io } from "socket.io-client";
 import { useEffect } from "react";
 import { useState } from "react";
-
+import dayjs from "dayjs";
 const socket = io("http://localhost:4001/");
 
 function App() {
@@ -24,7 +24,7 @@ function App() {
 		}
 	};
 
-	const chooseRoomname = () => {
+	const chooseRoomname = (room) => {
 		if (room !== "") {
 			socket.emit("join_room", room);
 		}
@@ -39,6 +39,11 @@ function App() {
 		socket.on("update_room", (data) => {
 			setRooms(data);
 		});
+		socket.on("deleted_room", (data) => {
+			setRooms(data);
+			setMessages([]);
+		});
+
 		// socket.on("rooms", (data) => {});
 		socket.on("sent_message", (data) => {
 			setMessages(data);
@@ -71,6 +76,10 @@ function App() {
 			setUser(userName);
 		});
 	}
+
+	const handleDelete = (roomName) => {
+		socket.emit("delete_room", roomName);
+	};
 
 	// function getAllRooms() {
 	// 	socket.emit("existingsRoom", () => {
@@ -105,16 +114,30 @@ function App() {
 										setRoom(event.target.value);
 									}}
 								/>
-								<button onClick={chooseRoomname}>Create</button>
+								<button onClick={() => chooseRoomname(room)}>
+									Create
+								</button>
 
 								<div>
 									{rooms.map((room) => (
-										<button
-											className="userId"
-											key={room.id}
-										>
-											{room.name}
-										</button>
+										<div key={room.id}>
+											<p
+												className="userId"
+												onClick={() => {
+													setRoom(room.name);
+													chooseRoomname(room.name);
+												}}
+											>
+												{room.name}
+											</p>
+											<button
+												onClick={() =>
+													handleDelete(room.name)
+												}
+											>
+												x
+											</button>
+										</div>
 									))}
 								</div>
 							</div>
@@ -127,6 +150,11 @@ function App() {
 											</p>
 											<p className="message">
 												{message.msg}
+											</p>
+											<p className="date">
+												{dayjs(message.date).format(
+													"YY-MM-DD HH:mm"
+												)}
 											</p>
 										</div>
 									))}

@@ -50,7 +50,9 @@
   background-color: blue;
 } */
 
-
+.date {
+  font-size: 10px;
+}
 .sideBar {
   display: flex;
   flex-direction: column;
