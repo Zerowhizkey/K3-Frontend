@@ -14,8 +14,8 @@ function App() {
 	const [room, setRoom] = useState("");
 	const [showChat, setShowChat] = useState(false);
 	// && room !== ""
-	console.log(user);
-	console.log(room, "detta är ett rum");
+	// console.log(user);
+	// console.log(room, "detta är ett rum");
 	const chooseUsername = () => {
 		if (user !== "") {
 			socket.emit("choose_username", user);
@@ -31,19 +31,25 @@ function App() {
 	};
 
 	useEffect(() => {
-		socket.on("connection", () => {
+		socket.on("connection", (data) => {
 			// console.log("works?!!=!");
+			setRooms(data);
+			// console.log(data);
 		});
-
-		socket.on("befintligamedelanden", (data) => {
+		socket.on("update_room", (data) => {
+			setRooms(data);
+		});
+		// socket.on("rooms", (data) => {});
+		socket.on("sent_message", (data) => {
 			setMessages(data);
 		});
-		socket.on("messages", ({ message, user, id }) => {
-			console.log(message);
-			console.log(id);
+		socket.on("sent_message", (messages) => {
+			console.log(messages);
+			// console.log(id);
 			setMessages((prevMessage) => {
-				return [...prevMessage, { message, user, id }];
+				return [...prevMessage];
 			});
+			// console.log(data);
 		});
 		// socket.on("user", (data) => {
 		// 	setUser(data);
@@ -51,8 +57,12 @@ function App() {
 		return () => socket.off();
 	}, []);
 
-	function handleMessage(message) {
-		socket.emit("messages", message);
+	function handleMessage(msg) {
+		socket.emit("message", {
+			msg,
+			roomName: room,
+			username: user,
+		});
 	}
 
 	function handleUser(event) {
@@ -62,11 +72,11 @@ function App() {
 		});
 	}
 
-	function getRooms() {
-		socket.emit("existingRoom", () => {
-			setRooms();
-		});
-	}
+	// function getAllRooms() {
+	// 	socket.emit("existingsRoom", () => {
+	// 		setRooms();
+	// 	});
+	// }
 
 	return (
 		<div className="App">
@@ -98,19 +108,25 @@ function App() {
 								<button onClick={chooseRoomname}>Create</button>
 
 								<div>
-									<p className="userId">{room}:</p>
+									{rooms.map((room) => (
+										<button
+											className="userId"
+											key={room.id}
+										>
+											{room.name}
+										</button>
+									))}
 								</div>
 							</div>
 							<div className="chatLayout">
 								<div className="chat">
 									{messages.map((message) => (
 										<div key={message.id}>
-											{/* {message.user}: */}
 											<p className="userId">
-												{message.user.name}:
+												{message.user_name}:
 											</p>
 											<p className="message">
-												{message.message}
+												{message.msg}
 											</p>
 										</div>
 									))}
