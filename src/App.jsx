@@ -9,17 +9,14 @@ function App() {
 	const [message, setMessage] = useState("");
 	const [messages, setMessages] = useState([]);
 	const [user, setUser] = useState("");
-	// const [username, setUsername] = useState("");
+	const [users, setUsers] = useState([]);
 	const [rooms, setRooms] = useState([]);
 	const [room, setRoom] = useState("");
 	const [showChat, setShowChat] = useState(false);
-	// && room !== ""
-	// console.log(user);
-	// console.log(room, "detta är ett rum");
+
 	const chooseUsername = () => {
 		if (user !== "") {
 			socket.emit("choose_username", user);
-			// socket.emit("join_room", room);
 			setShowChat(true);
 		}
 	};
@@ -32,10 +29,11 @@ function App() {
 
 	useEffect(() => {
 		socket.on("connection", (data) => {
-			// console.log("works?!!=!");
-			setRooms(data);
-			// console.log(data);
+			console.log(data);
+			setRooms(data.rooms);
+			setUsers(data.users);
 		});
+
 		socket.on("update_room", (data) => {
 			setRooms(data);
 		});
@@ -104,7 +102,7 @@ function App() {
 									{rooms.map((room) => (
 										<div key={room.id}>
 											<button
-												className="userId"
+												className="roomsId"
 												onClick={() => {
 													setRoom(room.name);
 													chooseRoomname(room.name);
@@ -123,6 +121,35 @@ function App() {
 									))}
 								</div>
 							</div>
+							<div className="sideBar">
+								<p>USERS:</p>
+								<div>
+									{users &&
+										users.map((user) => (
+											<div key={user.id}>
+												<button
+													className="usersId"
+													onClick={() => {
+														setRoom(user.name);
+														chooseRoomname(
+															user.name
+														);
+													}}
+												>
+													{user.name}
+												</button>
+												<button
+													onClick={() =>
+														handleDelete(user.name)
+													}
+												>
+													x
+												</button>
+											</div>
+										))}
+								</div>
+							</div>
+
 							<div className="chatLayout">
 								<div className="chat">
 									{messages.map((message) => (
