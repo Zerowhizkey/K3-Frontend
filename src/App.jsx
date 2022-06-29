@@ -14,7 +14,8 @@ function App() {
 	const [room, setRoom] = useState("");
 	const [showChat, setShowChat] = useState(false);
 
-	const chooseUsername = () => {
+	const chooseUsername = (user) => {
+		console.log(user);
 		if (user !== "") {
 			socket.emit("choose_username", user);
 			setShowChat(true);
@@ -29,11 +30,14 @@ function App() {
 
 	useEffect(() => {
 		socket.on("connection", (data) => {
-			console.log(data);
+			// console.log(data);
 			setRooms(data.rooms);
 			setUsers(data.users);
 		});
 
+		socket.on("get_users", (data) => {
+			setUsers(data);
+		});
 		socket.on("update_room", (data) => {
 			setRooms(data);
 		});
@@ -42,6 +46,9 @@ function App() {
 			setRoom("");
 			setMessages([]);
 		});
+		// socket.on("deleted_user", (updatedUser) => {
+		// 	setUsers(updatedUser);
+		// });
 
 		socket.on("sent_message", (data) => {
 			setMessages(data);
@@ -67,6 +74,12 @@ function App() {
 		socket.emit("delete_room", roomName);
 	};
 
+	const handleDeleteUser = (userId) => {
+		socket.emit("delete_user", userId);
+
+		// console.log("yooooooo");
+	};
+
 	return (
 		<div className="App">
 			{!showChat ? (
@@ -79,7 +92,7 @@ function App() {
 							setUser(event.target.value);
 						}}
 					/>
-					<button onClick={chooseUsername}>Accept</button>
+					<button onClick={() => chooseUsername(user)}>Accept</button>
 				</div>
 			) : (
 				<header className="App-header">
@@ -129,18 +142,20 @@ function App() {
 											<div key={user.id}>
 												<button
 													className="usersId"
-													onClick={() => {
-														setRoom(user.name);
-														chooseRoomname(
-															user.name
-														);
-													}}
+													// onClick={() => {
+													// 	setRoom(user.name);
+													// 	chooseRoomname(
+													// 		user.name
+													// 	);
+													// }}
 												>
 													{user.name}
 												</button>
 												<button
 													onClick={() =>
-														handleDelete(user.name)
+														handleDeleteUser(
+															user.name
+														)
 													}
 												>
 													x
