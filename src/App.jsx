@@ -98,70 +98,75 @@ function App() {
 				<header className="App-header">
 					<div className="application">
 						<div className="appLayout">
-							<div className="sideBar">
-								<p>ROOMS:</p>
-								<input
-									type="text"
-									placeholder="Room ID..."
-									onChange={(event) => {
-										setRoom(event.target.value);
-									}}
-								/>
-								<button onClick={() => chooseRoomname(room)}>
-									Create
-								</button>
-
-								<div>
-									{rooms.map((room) => (
-										<div key={room.id}>
-											<button
-												className="roomsId"
-												onClick={() => {
-													setRoom(room.name);
-													chooseRoomname(room.name);
-												}}
-											>
-												{room.name}
-											</button>
-											<button
-												onClick={() =>
-													handleDelete(room.name)
-												}
-											>
-												x
-											</button>
-										</div>
-									))}
-								</div>
-							</div>
-							<div className="sideBar">
-								<p>USERS:</p>
-								<div>
-									{users &&
-										users.map((user) => (
-											<div key={user.id}>
+							<div className="sidebars">
+								<div className="sidebarRoom">
+									<p>ROOMS:</p>
+									<input
+										type="text"
+										placeholder="Room ID..."
+										onChange={(event) => {
+											setRoom(event.target.value);
+										}}
+									/>
+									<button
+										onClick={() => chooseRoomname(room)}
+									>
+										Create
+									</button>
+									<div>
+										{rooms.map((room) => (
+											<div key={room.id}>
 												<button
-													className="usersId"
-													// onClick={() => {
-													// 	setRoom(user.name);
-													// 	chooseRoomname(
-													// 		user.name
-													// 	);
-													// }}
+													className="roomsId"
+													onClick={() => {
+														setRoom(room.name);
+														chooseRoomname(
+															room.name
+														);
+													}}
 												>
-													{user.name}
+													{room.name}
 												</button>
 												<button
 													onClick={() =>
-														handleDeleteUser(
-															user.name
-														)
+														handleDelete(room.name)
 													}
 												>
 													x
 												</button>
 											</div>
 										))}
+									</div>
+								</div>
+								<div className="sidebarUser">
+									<p>USERS:</p>
+									<div>
+										{users &&
+											users.map((user) => (
+												<div key={user.id}>
+													<button
+														className="usersId"
+														// onClick={() => {
+														// 	setRoom(user.name);
+														// 	chooseRoomname(
+														// 		user.name
+														// 	);
+														// }}
+													>
+														{user.name}
+													</button>
+													<button
+														onClick={() =>
+															handleDeleteUser(
+																user.name
+															)
+														}
+													>
+														x
+													</button>
+												</div>
+											))}
+									</div>
 								</div>
 							</div>
 
@@ -194,11 +199,12 @@ function App() {
 									></input>
 									<button
 										onClick={() => handleMessage(message)}
-										className="inputButton"
+										className="chatButton"
 									>
 										Send
 									</button>
 								</div>
+								{/* <div className="inputLayout"></div> */}
 							</div>
 						</div>
 					</div>
